@@ -9,37 +9,27 @@ test("renders AnimalForm component without crashing", () => {
 });
 
 describe("AnimalForm should submit a new animal array and display the array on the page", () => {
-    test("species input should accept text", () => {
+    test("species input should accept text", async () => {
         // Arrange
         render(<AnimalForm />);
 
         // Act
         const speciesInput = screen.getByLabelText(/species/i);
-        userEvent.type(speciesInput, 'dog');
-
-        // Assert
-        expect(speciesInput).toHaveValue('dog');
-    });
-    test("age input should accept text", () => {
-        // Arrange
-        render(<AnimalForm />);
-
-        // Act
         const ageInput = screen.getByLabelText(/age/i);
-        userEvent.type(ageInput, "2");
-
-        // Assert
-        expect(ageInput).toHaveValue("2");
-    });
-    test("notes input should accept text", () => {
-        // Arrange
-        render(<AnimalForm />);
+        const notesInput = screen.getByLabelText(/notes/i);
+        const button = screen.getByRole('button', { value: /submit!/i });
 
         // Act
-        const notesInput = screen.getByLabelText(/notes/i);
+        userEvent.type(speciesInput, 'dog');
+        userEvent.type(ageInput, "2");
         userEvent.type(notesInput, "is very cute");
-
+        userEvent.click(button);
+        
         // Assert
+        const newAnimal = await screen.findByText(/dog/i);
+        expect(speciesInput).toHaveValue('dog');
+        expect(ageInput).toHaveValue("2");
         expect(notesInput).toHaveValue("is very cute");
+        expect(newAnimal).toBeTruthy();
     });
 });
